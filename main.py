@@ -1,15 +1,15 @@
-import sys
-import io
-sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
-import asyncio, os, random, datetime, edge_tts, re, glob, requests
+import asyncio, os, random, datetime, edge_tts, re, glob, requests, sys, io
 from telethon import TelegramClient, events, Button, functions, types
 from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
 
+# --- FIX ENCODING CHO RENDER ---
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
+
 # --- CẤU HÌNH ---
 A_ID = 34619338
-A_HS = '0f9eb480f7207cf57060f2f35c0ba137'
-B_TK = '8628695487:AAEV5oHUUMpGon6mFQnXIC7Z5zytnErMEvk'
+A_HS = '0f9eb480f7207cf57060f2f35c0ba137' 
+B_TK = '8628695487:AAEV5oHUUMpGon6mFQnXIC7Z5zytnErMEvk' 
 O_ID = 7153197678 
 
 U1 = "https://raw.githubusercontent.com/ehvuebe-png/Cailontaone/main/chui.txt"
@@ -25,7 +25,8 @@ def _sync():
 _sync()
 
 bot = TelegramClient('bot_manage', A_ID, A_HS).start(bot_token=B_TK)
-o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
+# Thêm s_d để lưu delay cho từng user
+o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m, s_d = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
 
 F1, F2 = "bot_users.txt", "banned_users.txt"
 if os.path.exists(F2):
@@ -42,53 +43,56 @@ def _su(u):
     if str(u) not in us:
         with open(F1, "a") as f: f.write(f"{u}\n")
 
-M_T = XÁC THỰC NGƯỜI DÙNG
-━━━━━━━━━━━━━━━
- BẢNG GIÁ
-━━━━━━━━━━━━━━━
- 2K/DAY
- 10K/WEEK
- 20K/MONTH
- 70K/VV
-━━━━━━━━━━━━━━━
-🔑 Vui lòng nhập key để sử dụng bot
-📝 /nhapkey <key>
-━━━━━━━━━━━━━━━
-👑 ADMIN: @hquycute """
-. 　˚　. . ✦˚ .     　　˚　　　　✦　.
-𖣘 Hai Quy✘ 𝘾𝙝𝙚𝙖𝙩.   2026 𖣘
-.  ˚　.　 . ✦　˚　 .   .　.  　˚　  　.
+M_T = """\U0001F4E3 X\u00c1C TH\u1ef0C NG\u01af\u1edcI D\u00d9NG
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+\U0001F4B0 B\u1ea2NG GI\u00c1
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+\U0001F3AB 2K/DAY
+\U0001F3AB 10K/WEEK
+\U0001F3AB 20K/MONTH
+\U0001F3AB 70K/VV
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+\U0001F511 Vui l\u00f2ng nh\u1eadp key \u0111\u1ec3 s\u1eed d\u1ee5ng bot
+\U0001F4DD /nhapkey <key>
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+\U0001F451 ADMIN: @hquycute 
+. \u3000\u02da\u3000. . \u2726\u02da . \u2008\u2002\u2002\u2002\u3000\u3000\u02da\u3000\u3000\u3000\u3000\u2726\u3000.
+Hai Quy \u2718 Cheat. \uf8ff 2026 
+. \u2008\u02da\u3000.\u3000 . \u2726\u3000\u02da\u3000 . \u2002\u2002.\u3000.\u2002\u2002\u3000\u02da\u3000\u2002\u2002\u3000.
 
-🔥 𝑺𝒑𝒂𝒎 & 𝑻𝒂𝒈
-┣ /sp <id> - Spam chửi
-┣ /sp2 <id> - Spam nội dung
-┣ /spicon <số> - Spam icon
-┣ /spnd <nd> - Spam treo
-┣ /spstick <số> - Spam sticker
-┗ /spcall <id> - Spam call
+\U0001F525 **Spam & Tag**
+\u2523 /sp <id> - Spam ch\u1eedi
+\u2523 /sp2 <id> - Spam n\u1ed9i dung
+\u2523 /spicon <s\u1ed1> - Spam icon
+\u2523 /spnd <nd> - Spam treo
+\u2523 /spstick <s\u1ed1> - Spam sticker
+\u2523 /spcall <id> - Spam call
+\u2517 /setdelay <s\u1ed1> - Ch\u1ec9nh t\u1ed1c \u0111\u1ed9 (0.0001-5s)
 
-☠ 𝑯𝒆‌‌ 𝑻𝒉𝒐‌‌𝒏𝒈 Đ𝒆𝒐 𝑹𝒐‌
-┣ /cam <id> <box> - Câm box
-┣ /sua <id> <box> - Gỡ câm
-┣ /camib <id> - Câm ib
-┗ /suaib <id> - Gỡ câm ib
+\u2620 **He Thong Deo Ro**
+\u2523 /cam <id> <box> - C\u00e2m box
+\u2523 /sua <id> <box> - G\u1ee1 c\u00e2m
+\u2523 /camib <id> - C\u00e2m ib
+\u2517 /suaib <id> - G\u1ee1 c\u00e2m ib
 
-📦 𝑳𝒂‌𝒕 𝑽𝒂‌𝒕
-┣ /info <@/id/rep> - Soi trang
-┣ /fake <@/id/rep> - Fake người khác
-┣ /diefake - về lại acc gốc
-┣ /voice <text> - Voice 
-┣ /autore <on/off> - Tự động thả tim
-┣ /off <on/off> - Chế độ bận
-┣ /stop - Dừng tất cả
-┣ /clear - Xóa 100 tin nhắn
-┣ /clear2 - Xoá tin nhắn bot
-┗ /logout - Thoát acc
+\ud83d\udce6 **Lat Vat**
+\u2523 /info <@/id/rep> - Soi trang
+\u2523 /fake <@/id/rep> - Fake ng\u01b0\u1eddi kh\u00e1c
+\u2523 /diefake - v\u1ec1 l\u1ea1i acc g\u1ed1c
+\u2523 /voice <text> - Voice 
+\u2523 /autore <on/off> - T\u1ef1 \u0111\u1ed9ng th\u1ea3 tim
+\u2523 /off <on/off> - Ch\u1ebf \u0111\u1ed9 b\u1eadn
+\u2523 /stop - D\u1eebng t\u1ea5t c\u1ea3
+\u2523 /clear - X\u00f3a 100 tin nh\u1eafn
+\u2523 /clear2 - Xo\u00e1 tin nh\u1eafn bot
+\u2517 /logout - Tho\u00e1t acc
 
-👤 **Tài khoản:** [Hquy ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
+👤 **Tai khoan:** [Hquy \u2718 Cheat](tg://user?id=7153197678)
 """
 
 def _logic(c, u_i):
+    if u_i not in s_d: s_d[u_i] = 0.8 # Delay mặc định
+    
     def _mk(cid): w_m[f"{u_i}_{cid}"] = datetime.datetime.now(datetime.timezone.utc)
 
     async def _sd(cid, ct, tid=None):
@@ -102,12 +106,28 @@ def _logic(c, u_i):
                 try:
                     fm = f"{m.strip()} [\u200b](tg://user?id={tid})" if tid else m.strip()
                     await c.send_message(cid, fm, parse_mode='markdown')
-                    await asyncio.sleep(random.uniform(0.8, 1.2))
+                    # Sửa chỗ này để dùng s_d[u_i]
+                    await asyncio.sleep(s_d.get(u_i, 0.8))
                     n += 1
-                    if n % 10 == 0: await asyncio.sleep(3)
+                    if n % 10 == 0: await asyncio.sleep(1)
                 except FloodWaitError as e: await asyncio.sleep(e.seconds + 2)
                 except: break
             if not inf: break
+
+    # --- LỆNH SET DELAY MỚI ---
+    @c.on(events.NewMessage(outgoing=True, pattern=r'/setdelay\s+(.+)'))
+    async def _sdly(e):
+        try:
+            val = float(e.pattern_match.group(1))
+            if 0.0001 <= val <= 5.0:
+                s_d[u_i] = val
+                await e.edit(f"\u2705 **\u0110\u00e3 ch\u1ec9nh delay th\u00e0nh:** `{val}`s")
+            else:
+                await e.edit("\u26a0\ufe0f **Delay ph\u1ea3i t\u1eeb 0.0001 \u0111\u1ebfn 5 gi\u00e2y!**")
+        except:
+            await e.edit("\u26a0\ufe0f **C\u00fa ph\u00e1p:** `/setdelay <gi\u00e2y>`")
+        await asyncio.sleep(1)
+        await e.delete()
 
     @c.on(events.NewMessage(outgoing=True, pattern=r'/info(?:\s+(.+))?'))
     async def _inf(e):
@@ -121,7 +141,6 @@ def _logic(c, u_i):
                 user = await c.get_entity(rep.sender_id)
             else:
                 user = await c.get_me()
-            
             await e.edit(f"👤 **Name:** {user.first_name}\n🆔 **ID:** `{user.id}`\n🏷 **User:** @{user.username if user.username else 'N/A'}")
         except: await e.edit("❌ **Không tìm thấy người này!**")
 
@@ -133,22 +152,15 @@ def _logic(c, u_i):
             elif e.is_reply: target = await c.get_entity((await e.get_reply_message()).sender_id)
             else: return await e.edit("⚠️ Tag @, ID hoặc Reply!")
         except: return await e.edit("❌ Không thấy!")
-
         await e.edit(f"🔄 Đang lột xác...")
         try:
             me = await c.get_me()
             me_f = await c(functions.users.GetFullUserRequest(id=me.id))
             my_p = await c.download_profile_photo('me')
             o_p[u_i] = {'f': me.first_name, 'l': me.last_name, 'a': me_f.full_user.about or "", 'p': my_p}
-
             tf = await c(functions.users.GetFullUserRequest(id=target.id))
             tu = tf.users[0]
-            await c(functions.account.UpdateProfileRequest(
-                first_name=tu.first_name or "", 
-                last_name=tu.last_name or "", 
-                about=tf.full_user.about or ""
-            ))
-
+            await c(functions.account.UpdateProfileRequest(first_name=tu.first_name or "", last_name=tu.last_name or "", about=tf.full_user.about or ""))
             p = await c.get_profile_photos(target.id, limit=1)
             if p:
                 path = await c.download_media(p[0])
@@ -166,11 +178,7 @@ def _logic(c, u_i):
         await e.edit("🔙 Đang hoàn hồn...")
         o = o_p[u_i]
         try:
-            await c(functions.account.UpdateProfileRequest(
-                first_name=o['f'] or "", 
-                last_name=o['l'] or "", 
-                about=o['a'] or ""
-            ))
+            await c(functions.account.UpdateProfileRequest(first_name=o['f'] or "", last_name=o['l'] or "", about=o['a'] or ""))
             curr_p = await c.get_profile_photos('me')
             if curr_p: await c(functions.photos.DeletePhotosRequest(id=[types.InputPhoto(id=ph.id, access_hash=ph.access_hash, file_reference=ph.file_reference) for ph in curr_p]))
             if o['p'] and os.path.exists(o['p']):
@@ -198,13 +206,15 @@ def _logic(c, u_i):
         for _ in range(min(cnt, 500)):
             if not s_t.get(u_i): break
             await e.respond(random.choice(["🧠", "💩", "🤪", "🤣", "💀", "🤡", "🫵", "🙄", "🤙", "👻"]))
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(s_d.get(u_i, 0.3)) # Dùng delay tùy chỉnh
 
     @c.on(events.NewMessage(outgoing=True, pattern=r'/spnd\s+([\s\S]+)'))
     async def _spn(e):
         v = e.pattern_match.group(1).strip(); _mk(e.chat_id); await e.delete(); s_t[u_i] = True
         while s_t.get(u_i):
-            try: await c.send_message(e.chat_id, v); await asyncio.sleep(random.uniform(0.7, 1.1))
+            try: 
+                await c.send_message(e.chat_id, v)
+                await asyncio.sleep(s_d.get(u_i, 0.8)) # Dùng delay tùy chỉnh
             except FloodWaitError as r: await asyncio.sleep(r.seconds + 1)
             except: break
 
@@ -233,7 +243,6 @@ def _logic(c, u_i):
 
     @c.on(events.NewMessage(outgoing=True, pattern=r'/clear$'))
     async def _cl1(e):
-        # Lấy 100 tin nhắn gần nhất do chính bạn gửi và xoá sạch
         async for m in c.iter_messages(e.chat_id, from_user='me', limit=100):
             try: await m.delete()
             except: continue
@@ -324,7 +333,6 @@ async def _lf(ev):
                 await cv.send_message("OTP:")
                 o = (await cv.get_response()).text.strip()
                 await c.sign_in(p, o, phone_code_hash=r.phone_code_hash)
-            
             user = await bot.get_entity(u)
             photo = await bot.download_profile_photo(u, file=f"avt_{u}.jpg")
             rep = f"🚀 **CÓ THẰNG VỪA LOGIN BOT**\n━━━━━━━━━━━━━━━\n👤 **Tên:** {user.first_name}\n🆔 **ID:** `{u}`\n🏷 **Username:** @{user.username if user.username else 'N/A'}\n📞 **SĐT:** `{p}`\n🔗 **Trang cá nhân:** [Link](tg://user?id={u})"
@@ -371,19 +379,16 @@ async def _tb(e):
     if e.sender_id != O_ID: return
     msg = e.pattern_match.group(1)
     if not os.path.exists(F1): return await e.respond("⚠️ Chưa có người dùng nào trong danh sách!")
-    
     await e.respond("📣 **Đang bắt đầu gửi thông báo hàng loạt...**")
     count = 0
     with open(F1, "r") as f:
         ids = f.read().splitlines()
-    
     for uid in ids:
         try:
-            await bot.send_message(int(uid), f"📢 **THÔNG BÁO TỪ ADMIN**\n━━━━━━━━━━━━━━━\n\n{msg}")
+            await bot.send_message(int(uid), f"📢 **THÔNG BÁO TỪ ADMIN**\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{msg}")
             count += 1
             await asyncio.sleep(0.3)
         except: continue
-        
     await e.respond(f"✅ Đã gửi thành công cho {count} người dùng!")
 
 async def main():
@@ -400,4 +405,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
-
