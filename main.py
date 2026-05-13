@@ -38,14 +38,14 @@ def _su(u):
     if str(u) not in us:
         with open(F1, "a") as f: f.write(f"{u}\n")
 
-M_T =📣 XÁC THỰC NGƯỜI DÙNG
+M_T = XÁC THỰC NGƯỜI DÙNG
 ━━━━━━━━━━━━━━━
-💰 BẢNG GIÁ
+ BẢNG GIÁ
 ━━━━━━━━━━━━━━━
-🎫 2K/DAY
-🎫 10K/WEEK
-🎫 20K/MONTH
-🎫 70K/VV
+ 2K/DAY
+ 10K/WEEK
+ 20K/MONTH
+ 70K/VV
 ━━━━━━━━━━━━━━━
 🔑 Vui lòng nhập key để sử dụng bot
 📝 /nhapkey <key>
