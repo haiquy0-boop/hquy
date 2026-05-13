@@ -1,3 +1,7 @@
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 import asyncio, os, random, datetime, edge_tts, re, glob, requests
 from telethon import TelegramClient, events, Button, functions, types
 from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
