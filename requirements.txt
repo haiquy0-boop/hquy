@@ -1,4 +1,9 @@
-telethon
+flask
 requests
-edge-tts
-asyncio
+httpx
+rich
+colorama
+beautifulsoup4
+pyfiglet
+art
+certifi
