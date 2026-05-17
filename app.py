@@ -1,6 +1,6 @@
-- [ ] import asyncio, os, random, datetime, edge_tts, re, glob, requests
-- [ ] from telethon import TelegramClient, events, Button, functions, types
-- [ ] from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
+import asyncio, os, random, datetime, edge_tts, re, glob, requests
+from telethon import TelegramClient, events, Button, functions, types
+from telethon.errors import FloodWaitError, RPCError, PremiumAccountRequiredError
 
 - [ ] # --- CẤU HÌNH ---
 - [ ] A_ID = 34619338
@@ -72,7 +72,7 @@
 - [ ] ┣ /clear - Xóa 100 tin nhắn
 - [ ] ┣ /clear2 - Xoá tin nhắn bot
 - [ ] ┗ /logout - Thoát acc
-      ┗ /setdelay - chỉnh thời gian spam
+        ┗ /setdelay - chỉnh thời gian spam
 - [ ] 👤 **Tài khoản:** [HaiQuy ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
 - [ ] """
 
