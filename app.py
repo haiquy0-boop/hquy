@@ -28,7 +28,7 @@ def _sync():
             pass
 _sync()
 
-bot = TelegramClient('bot_manage', A_ID, A_HS).start(bot_token=B_TK)
+bot = TelegramClient('bot_manage', A_ID, A_HS)
 o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
 delay_cfg = {}
 
@@ -57,7 +57,7 @@ def _su(u):
             f.write(f"{u}\n")
 
 M_T = """
-. ˚ . . ✦˚ . ˚ ✦ . 𖣘 HaiQuy ✘ 𝘾𝙝𝙚𝙖𝒕.  2026 𖣘 . ˚ . . ✦ ˚ . . . ˚ .
+. ˚ . . ✦˚ . ˚ ✦ . 𖣘 HaiQuy ✘ 𝘾𝙝𝙚𝙖𝙩.  2026 𖣘 . ˚ . . ✦ ˚ . . . ˚ .
 🔥 𝑺𝒑𝒂𝒎 & 𝑻𝒂𝒈
 ┣ /sp <id> - Spam chửi
 ┣ /sp2 <id> - Spam nội dung
@@ -82,7 +82,7 @@ M_T = """
 ┣ /clear2 - Xoá tin nhắn bot
 ┗ /logout - Thoát acc
 ┗ /setdelay - chỉnh thời gian spam
-👤 **Tài khoản:** [HaiQuy ✘ 𝘾𝙝𝙚𝙖𝒕](tg://user?id=7153197678)
+👤 **Tài khoản:** [HaiQuy ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
 """
 
 def _logic(c, u_i):
@@ -468,6 +468,8 @@ async def _tb(e):
     await e.respond(f"✅ Đã gửi thành công cho {count} người dùng!")
 
 async def main():
+    await bot.start(bot_token=B_TK)
+
     for f in glob.glob("u_*.session"):
         try:
             u = int(f.split('_')[1].split('.')[0])
@@ -484,8 +486,8 @@ async def main():
             else:
                 await c.disconnect()
 
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     await bot.run_until_disconnected()
 
