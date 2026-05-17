@@ -202,8 +202,8 @@ def start_master():
             "┗ /setdelay <s>"
         )
     )
-                    )
-                )
+                    
+                
 
             # ============ ADMIN PANEL ============
 
