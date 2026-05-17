@@ -72,7 +72,7 @@
 - [ ] ┣ /clear - Xóa 100 tin nhắn
 - [ ] ┣ /clear2 - Xoá tin nhắn bot
 - [ ] ┗ /logout - Thoát acc
-        ┗ /setdelay - chỉnh thời gian spam
+      ┗ /setdelay - chỉnh thời gian spam
 - [ ] 👤 **Tài khoản:** [HaiQuy ✘ 𝘾𝙝𝙚𝙖𝙩](tg://user?id=7153197678)
 - [ ] """
 
