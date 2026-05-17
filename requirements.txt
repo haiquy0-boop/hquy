@@ -1,9 +1,2 @@
+pyTelegramBotAPI
 flask
-requests
-httpx
-rich
-colorama
-beautifulsoup4
-pyfiglet
-art
-certifi
