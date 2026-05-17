@@ -28,7 +28,12 @@ def _sync():
             pass
 _sync()
 
-bot = TelegramClient('bot_manage', A_ID, A_HS)
+bot = TelegramClient(
+    'bot_manage',
+    A_ID,
+    A_HS,
+    loop=asyncio.new_event_loop()
+)
 o_p, u_c, c_b, c_i, s_t, cl_t, a_r, o_f, w_m = {}, {}, {}, {}, {}, {}, {}, {}, {}
 delay_cfg = {}
 
