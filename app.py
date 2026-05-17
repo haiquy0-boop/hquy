@@ -37,6 +37,7 @@ def load_data():
 def save_data(data):
 
     with open(DATA_FILE, "w", encoding="utf-8") as f:
+
         json.dump(
             data,
             f,
@@ -57,7 +58,7 @@ stop_event = threading.Event()
 # ================= TOKEN =================
 
 RAW_TOKENS = [
-'8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
+   '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
     '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
     '8144155270:AAH-y47kIAFWgo7sge1VmCMrx2dc9CkYxOs', '8688293059:AAGoga_q3E7VbZQ3sL6xZ3-vzGgtC7RsTmc',
     '8652311818:AAGmFWSeRYW1-RQ-RH8jNguwkRtzFt0U-oQ', '8731497895:AAHHhCiAp7a62eflQBe0PztWw0jRjDPpyk4',
@@ -91,13 +92,20 @@ def get_text():
 
     lines = []
 
-    for fname in ["chui.txt", "ngontagtele.txt"]:
+    for fname in [
+        "chui.txt",
+        "ngontagtele.txt"
+    ]:
 
         if os.path.exists(fname):
 
             try:
 
-                with open(fname, "r", encoding="utf-8") as f:
+                with open(
+                    fname,
+                    "r",
+                    encoding="utf-8"
+                ) as f:
 
                     for line in f:
 
@@ -112,7 +120,10 @@ def get_text():
     if not lines:
         lines = ["Hai Quy"]
 
-    chunk = max(1, len(lines) // 4)
+    chunk = max(
+        1,
+        len(lines) // 4
+    )
 
     return {
         "sp": lines[:chunk],
@@ -123,7 +134,7 @@ def get_text():
 
 KHO_DAN = get_text()
 
-# ================= SPAM =================
+# ================= ATTACK =================
 
 def attack_logic(
     bot,
@@ -143,6 +154,7 @@ def attack_logic(
 
             if mode == "slow":
                 time.sleep(2.5)
+
             else:
                 time.sleep(DELAY_TIME)
 
@@ -153,7 +165,10 @@ def attack_logic(
 
 def start_master():
 
+    global DELAY_TIME
+
     if not VALID_BOTS:
+
         print("NO BOT")
         return
 
@@ -179,33 +194,31 @@ def start_master():
 
             cmd = args[0].lower()
 
-            # ============ HELP ============
+            # ================= HELP =================
 
-if cmd == "/help":
+            if cmd == "/help":
 
-    master.reply_to(
-        m,
-        (
-            "───「 HAI QUY 2026 」───\n\n"
+                master.reply_to(
+                    m,
+                    (
+                        "───「 HAI QUY 2026 」───\n\n"
 
-            "🔥 SPAM & TAG\n"
-            "┣ /sp\n"
-            "┣ /sp2\n"
-            "┣ /sptag\n"
-            "┣ /spslow\n"
-            "┣ /spnd <text>\n\n"
+                        "🔥 SPAM & TAG\n"
+                        "┣ /sp\n"
+                        "┣ /sp2\n"
+                        "┣ /sptag\n"
+                        "┣ /spslow\n"
+                        "┣ /spnd <text>\n\n"
 
-            "⚙️ TIỆN ÍCH\n"
-            "┣ /dung\n"
-            "┣ /listbot\n"
-            "┣ /info\n"
-            "┗ /setdelay <s>"
-        )
-    )
-                    
-                
+                        "⚙️ TIỆN ÍCH\n"
+                        "┣ /dung\n"
+                        "┣ /listbot\n"
+                        "┣ /info\n"
+                        "┗ /setdelay <s>"
+                    )
+                )
 
-            # ============ ADMIN PANEL ============
+            # ================= ADMIN PANEL =================
 
             elif cmd == "/ad":
 
@@ -217,12 +230,11 @@ if cmd == "/help":
                             "👑 ADMIN PANEL\n\n"
 
                             "/addadm <id>\n"
-                            "/xoaadm <id>\n"
-                          
+                            "/xoaadm <id>"
                         )
                     )
 
-            # ============ INFO ============
+            # ================= INFO =================
 
             elif cmd == "/info":
 
@@ -235,7 +247,7 @@ if cmd == "/help":
                     )
                 )
 
-            # ============ LISTBOT ============
+            # ================= LIST BOT =================
 
             elif cmd == "/listbot":
 
@@ -244,7 +256,46 @@ if cmd == "/help":
                     f"🤖 Online: {len(VALID_BOTS)}"
                 )
 
-            # ============ SP ============
+            # ================= STOP =================
+
+            elif cmd == "/dung":
+
+                stop_event.set()
+
+                master.reply_to(
+                    m,
+                    "🛑 STOPPED"
+                )
+
+            # ================= DELAY =================
+
+            elif cmd == "/setdelay":
+
+                if len(args) < 2:
+                    return
+
+                try:
+
+                    val = float(args[1])
+
+                    if val < 0:
+                        val = 0
+
+                    DELAY_TIME = val
+
+                    master.reply_to(
+                        m,
+                        f"⏳ Delay: {DELAY_TIME}s"
+                    )
+
+                except:
+
+                    master.reply_to(
+                        m,
+                        "❌ Delay lỗi"
+                    )
+
+            # ================= SPAM =================
 
             elif cmd in [
                 "/sp",
@@ -256,7 +307,7 @@ if cmd == "/help":
 
                 stop_event.clear()
 
-                # custom text
+                # spam custom
 
                 if cmd == "/spnd":
 
@@ -311,18 +362,7 @@ if cmd == "/help":
                             daemon=True
                         ).start()
 
-            # ============ STOP ============
-
-            elif cmd == "/dung":
-
-                stop_event.set()
-
-                master.reply_to(
-                    m,
-                    "🛑 STOPPED"
-                )
-
-            # ============ ADMIN ============
+            # ================= ADMIN COMMAND =================
 
             elif is_admin(uid):
 
@@ -384,34 +424,6 @@ if cmd == "/help":
                     except:
                         pass
 
-                # set delay
-
-                elif cmd == "/setdelay":
-
-                    if len(args) < 2:
-                        return
-
-                    try:
-
-                        val = float(args[1])
-
-                        if val < 0:
-                            val = 0
-
-                        DELAY_TIME = val
-
-                        master.reply_to(
-                            m,
-                            f"⏳ {DELAY_TIME}s"
-                        )
-
-                    except:
-
-                        master.reply_to(
-                            m,
-                            "❌ Delay lỗi"
-                        )
-
         except Exception as ex:
 
             print("ERROR:", ex)
@@ -448,7 +460,7 @@ def filter_system():
                 f"Dead token: {t[:15]}"
             )
 
-# ================= MAIN =================
+# ================= START =================
 
 if __name__ == "__main__":
 
