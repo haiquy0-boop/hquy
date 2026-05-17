@@ -181,7 +181,7 @@ def start_master():
 
             # ============ HELP ============
 
-            if cmd == "/help":
+if cmd == "/help":
 
     master.reply_to(
         m,
