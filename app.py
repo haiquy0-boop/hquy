@@ -1,33 +1,63 @@
-import telebot, threading, time, random, os, json, uuid
-from datetime import datetime, timedelta
+import telebot
+import threading
+import time
+import random
+import os
+import json
 from flask import Flask
 
-# --- HỆ THỐNG DUY TRÌ ---
-app = Flask(__name__)
-@app.route('/')
-def home(): return "SYSTEM ONLINE"
+# ================= WEB =================
 
-# --- DATABASE ---
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "ONLINE"
+
+# ================= DATABASE =================
+
 DATA_FILE = "bot_data.json"
+
 def load_data():
+
     if os.path.exists(DATA_FILE):
+
         try:
-            with open(DATA_FILE, "r") as f: return json.load(f)
-        except: pass
-    return {"admins": [7153197678], "keys": {}, "authorized_groups": {}, "users_with_key": {}}
+
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+
+        except:
+            pass
+
+    return {
+        "admins": [7153197678]
+    }
 
 def save_data(data):
-    with open(DATA_FILE, "w") as f: json.dump(data, f, indent=4)
+
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(
+            data,
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
 
 db = load_data()
-OWNER_ID = 7153197678 
-DELAY_TIME = 0.1
-stop_event = threading.Event()
-BLACKLIST = {}
 
-# --- NẠP 29 TOKEN ---
+OWNER_ID = 7153197678
+
+# ================= CONFIG =================
+
+DELAY_TIME = 0.1
+
+stop_event = threading.Event()
+
+# ================= TOKEN =================
+
 RAW_TOKENS = [
-    '8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
+'8675065386:AAHVtY8NYQOykrCCEQ9tQDpe_mZK9XUmVV0', '8750639984:AAGAU7SsEe_V9CpZ9LAfxovI2iFWSCQ9riw',
     '8423233437:AAFPeFNFctZlgO8VU_KGkp_HT71FCTywUmI', '8705345450:AAHAxsFUHu7ux4USLvItL018KD4hBsTe4_Q',
     '8144155270:AAH-y47kIAFWgo7sge1VmCMrx2dc9CkYxOs', '8688293059:AAGoga_q3E7VbZQ3sL6xZ3-vzGgtC7RsTmc',
     '8652311818:AAGmFWSeRYW1-RQ-RH8jNguwkRtzFt0U-oQ', '8731497895:AAHHhCiAp7a62eflQBe0PztWw0jRjDPpyk4',
@@ -43,163 +73,393 @@ RAW_TOKENS = [
     '8625550674:AAHIHuakDCvvxwCC0mgrDLU5g8vBNFdD7eI', '8724848112:AAHhLYnH1LO4tVUPMTjztbNZZtni7D0uDl4', 
     '8471422557:AAF30BcMF15veQPHCTDqcA1NU0iHb63Zm1o'
 ]
+
 VALID_BOTS = []
 
-# --- LOGIC PHÂN QUYỀN ---
-def is_admin(uid): return uid in db["admins"] or uid == OWNER_ID
+# ================= ADMIN =================
 
-def has_valid_key(uid):
-    if is_admin(uid): return True
-    uid_str = str(uid)
-    if uid_str in db["users_with_key"]:
-        try:
-            expiry = datetime.strptime(db["users_with_key"][uid_str], "%Y-%m-%d")
-            if expiry > datetime.now(): return True
-        except: pass
-    return False
+def is_admin(uid):
 
-# --- KHO NGÔN NGỮ ---
-def get_ngon_tu():
-    all_lines = []
-    for fname in ["ngontagtele.txt", "chui.txt"]:
+    return (
+        uid == OWNER_ID
+        or uid in db["admins"]
+    )
+
+# ================= LOAD TEXT =================
+
+def get_text():
+
+    lines = []
+
+    for fname in ["chui.txt", "ngontagtele.txt"]:
+
         if os.path.exists(fname):
-            with open(fname, "r", encoding="utf-8") as f:
-                for line in f:
-                    clean = line.strip()
-                    if clean and not clean.startswith("["): all_lines.append(clean)
-    if not all_lines: all_lines = ["Hai Quy NO1"]
-    chunk = max(1, len(all_lines) // 4)
-    return {"sp": all_lines[:chunk], "sp2": all_lines[chunk:chunk*2], "sptag": all_lines[chunk*2:chunk*3], "spslow": all_lines[chunk*3:]}
 
-KHO_DAN = get_ngon_tu()
+            try:
 
-def attack_logic(bot, chat_id, lines, mode="normal"):
+                with open(fname, "r", encoding="utf-8") as f:
+
+                    for line in f:
+
+                        clean = line.strip()
+
+                        if clean:
+                            lines.append(clean)
+
+            except:
+                pass
+
+    if not lines:
+        lines = ["Hai Quy"]
+
+    chunk = max(1, len(lines) // 4)
+
+    return {
+        "sp": lines[:chunk],
+        "sp2": lines[chunk:chunk*2],
+        "sptag": lines[chunk*2:chunk*3],
+        "spslow": lines[chunk*3:]
+    }
+
+KHO_DAN = get_text()
+
+# ================= SPAM =================
+
+def attack_logic(
+    bot,
+    chat_id,
+    lines,
+    mode="normal"
+):
+
     while not stop_event.is_set():
+
         try:
-            bot.send_message(chat_id, random.choice(lines))
-            time.sleep(DELAY_TIME if mode == "normal" else 2.5)
-        except: break
+
+            bot.send_message(
+                chat_id,
+                random.choice(lines)
+            )
+
+            if mode == "slow":
+                time.sleep(2.5)
+            else:
+                time.sleep(DELAY_TIME)
+
+        except:
+            break
+
+# ================= MAIN =================
 
 def start_master():
-    if not VALID_BOTS: return
+
+    if not VALID_BOTS:
+        print("NO BOT")
+        return
+
     master = VALID_BOTS[0]
 
     @master.message_handler(func=lambda m: True)
     def handle_all(m):
-        global DELAY_TIME, stop_event, BLACKLIST, db
-        uid, gid = m.from_user.id, m.chat.id
-        args = m.text.split()
-        if not args: return
-        cmd = args[0].lower()
 
-        # BLACKLIST CHECK
-        if gid in BLACKLIST and uid in BLACKLIST[gid]:
-            try: master.delete_message(gid, m.message_id)
-            except: pass
-            return
+        global DELAY_TIME
 
-        # 1. MENU HELP - HÀNG DỌC (PUBLIC)
-        if cmd == '/help':
-            master.reply_to(m, (
-                "───「 **HAI QUY 2026** 」───\n"
-                "🔥 **𝐒𝐏𝐀𝐌 & 𝐓𝐀𝐆**\n"
-                "┣ `/sp` - Spam ngôn 1\n"
-                "┣ `/sp2` - Spam ngôn 2\n"
-                "┣ `/sptag` - Tag ẩn \n"
-                "┣ `/spslow` - Spam chậm\n"
-                "┗ `/spnd` - Spam nội dung\n\n"
-                "┗ `/setdelay` - Chỉnh tốc độ\n\n"
-                "📦 **𝐓𝐈𝐄̣̂𝐍 𝐈́𝐂𝐇**\n"
-                "┣ `/dung` - STOP\n"
-                "┣ `/listbot` - CHECKn"
-                "┣ `/setkey` - Kích hoạt Key\n"
-                "┗ `/info` - Check thông tin\n"
-                "──────────────────\n"
-                "👤 **OWNER:** Hải Quý"
-            ), parse_mode="Markdown")
+        try:
 
-        # 2. MENU ADMIN - HÀNG DỌC (PRIVATE)
-        elif cmd == '/ad':
-            if is_admin(uid):
-                master.reply_to(m, (
-                    "───「 **ADMIN CONTROL** 」───\n"
-                    "👑 **𝐐𝐔𝐘𝐄̂̀𝐍 𝐓𝐎̂́𝐈 𝐂𝐀𝐎**\n"
-                    "┣ `/addadm <id>` - Thêm Admin\n"
-                    "┣ `/xoaadm <id>` - Xóa Admin\n"
-                    "┣ `/newkey <tên> <day/week/forever>`\n"
-                    "┗ `/xoakey <tên>` - Xóa Key bot\n"
-                    "──────────────────"
-                ), parse_mode="Markdown")
-            else:
-                master.reply_to(m, "🚫 Cút!")
+            uid = m.from_user.id
+            gid = m.chat.id
 
-        # INFO & LISTBOT
-        elif cmd == '/info':
-            master.reply_to(m, f"👤 **User:** {m.from_user.first_name}\n🆔 **ID:** `{uid}`\n🌐 **Chat ID:** `{gid}`", parse_mode="Markdown")
-        elif cmd == '/listbot':
-            master.reply_to(m, f"🤖 **Bot Online:** {len(VALID_BOTS)}/29")
-
-        # LOGIC KÍCH HOẠT KEY
-        elif cmd == '/setkey' and len(args) > 1:
-            key_name = args[1]
-            if key_name in db["keys"]:
-                expiry = db["keys"][key_name]
-                db["users_with_key"][str(uid)] = expiry
-                del db["keys"][key_name] # Key dùng 1 lần
-                save_data(db)
-                master.reply_to(m, f"✅ **Kích hoạt thành công!**\n⏰ Hết hạn: {expiry}")
-            else:
-                master.reply_to(m, "❌ Key không tồn tại hoặc đã hết hạn!")
-
-        # LOGIC TẤN CÔNG (PHẢI CÓ KEY MỚI DÙNG ĐƯỢC)
-        elif cmd in ['/sp', '/sp2', '/sptag', '/spslow', '/spnd']:
-            if not has_valid_key(uid):
-                master.reply_to(m, "⚠️ **KHÔNG CÓ QUYỀN:** Vui lòng gõ `/setkey <key>` để sử dụng bot!")
+            if not m.text:
                 return
-            
-            stop_event.clear()
-            if cmd == '/spnd' and len(args) > 1:
-                nd = [" ".join(args[1:])]
-                for b in VALID_BOTS: threading.Thread(target=attack_logic, args=(b, gid, nd)).start()
-            else:
-                dan = KHO_DAN.get(cmd[1:], KHO_DAN['sp'])
-                for b in VALID_BOTS: threading.Thread(target=attack_logic, args=(b, gid, dan, "slow" if cmd == '/spslow' else "normal")).start()
 
-        elif cmd == '/dung':
-            stop_event.set(); master.reply_to(m, "🛑 **STOP!**")
+            args = m.text.strip().split()
 
-        # LOGIC XỬ LÝ CHO ADMIN
-        elif is_admin(uid):
-            if cmd == '/addadm' and len(args) > 1:
-                new_id = int(args[1])
-                if new_id not in db["admins"]: db["admins"].append(new_id); save_data(db)
-                master.reply_to(m, "✅ Thêm Admin thành công!")
-            elif cmd == '/newkey' and len(args) > 2:
-                k_name, duration = args[1], args[2].lower()
-                days = {"day": 1, "week": 7, "month": 30, "forever": 36500}.get(duration, 1)
-                expiry = (datetime.now() + timedelta(days=days)).strftime("%Y-%m-%d")
-                db["keys"][k_name] = expiry; save_data(db)
-                master.reply_to(m, f"🔑 **Key:** `{k_name}`\n⏰ **Hạn:** {expiry}")
-            elif cmd == '/setdelay' and len(args) > 1:
-                try: DELAY_TIME = float(args[1]); master.reply_to(m, f"⏳ Tốc độ: {DELAY_TIME}s")
-                except: pass
-            elif cmd == '/cam':
-                target = m.reply_to_message.from_user.id if m.reply_to_message else (int(args[1]) if len(args)>1 else None)
-                if target:
-                    if gid not in BLACKLIST: BLACKLIST[gid] = []
-                    BLACKLIST[gid].append(target); master.reply_to(m, "🔇 Đã khóa mõm!")
-            elif cmd == '/clear':
-                master.reply_to(m, "🧹 DONE XOA!")
+            if not args:
+                return
 
-    master.infinity_polling()
+            cmd = args[0].lower()
+
+            # ============ HELP ============
+
+            if cmd == "/help":
+
+    master.reply_to(
+        m,
+        (
+            "───「 HAI QUY 2026 」───\n\n"
+
+            "🔥 SPAM & TAG\n"
+            "┣ /sp\n"
+            "┣ /sp2\n"
+            "┣ /sptag\n"
+            "┣ /spslow\n"
+            "┣ /spnd <text>\n\n"
+
+            "⚙️ TIỆN ÍCH\n"
+            "┣ /dung\n"
+            "┣ /listbot\n"
+            "┣ /info\n"
+            "┗ /setdelay <s>"
+        )
+    )
+                    )
+                )
+
+            # ============ ADMIN PANEL ============
+
+            elif cmd == "/ad":
+
+                if is_admin(uid):
+
+                    master.reply_to(
+                        m,
+                        (
+                            "👑 ADMIN PANEL\n\n"
+
+                            "/addadm <id>\n"
+                            "/xoaadm <id>\n"
+                          
+                        )
+                    )
+
+            # ============ INFO ============
+
+            elif cmd == "/info":
+
+                master.reply_to(
+                    m,
+                    (
+                        f"👤 {m.from_user.first_name}\n"
+                        f"🆔 {uid}\n"
+                        f"💬 {gid}"
+                    )
+                )
+
+            # ============ LISTBOT ============
+
+            elif cmd == "/listbot":
+
+                master.reply_to(
+                    m,
+                    f"🤖 Online: {len(VALID_BOTS)}"
+                )
+
+            # ============ SP ============
+
+            elif cmd in [
+                "/sp",
+                "/sp2",
+                "/sptag",
+                "/spslow",
+                "/spnd"
+            ]:
+
+                stop_event.clear()
+
+                # custom text
+
+                if cmd == "/spnd":
+
+                    if len(args) < 2:
+
+                        master.reply_to(
+                            m,
+                            "❌ Thiếu nội dung"
+                        )
+
+                        return
+
+                    nd = [
+                        " ".join(args[1:])
+                    ]
+
+                    for b in VALID_BOTS:
+
+                        threading.Thread(
+                            target=attack_logic,
+                            args=(
+                                b,
+                                gid,
+                                nd
+                            ),
+                            daemon=True
+                        ).start()
+
+                else:
+
+                    dan = KHO_DAN.get(
+                        cmd[1:],
+                        KHO_DAN["sp"]
+                    )
+
+                    mode = (
+                        "slow"
+                        if cmd == "/spslow"
+                        else "normal"
+                    )
+
+                    for b in VALID_BOTS:
+
+                        threading.Thread(
+                            target=attack_logic,
+                            args=(
+                                b,
+                                gid,
+                                dan,
+                                mode
+                            ),
+                            daemon=True
+                        ).start()
+
+            # ============ STOP ============
+
+            elif cmd == "/dung":
+
+                stop_event.set()
+
+                master.reply_to(
+                    m,
+                    "🛑 STOPPED"
+                )
+
+            # ============ ADMIN ============
+
+            elif is_admin(uid):
+
+                # add admin
+
+                if cmd == "/addadm":
+
+                    if len(args) < 2:
+                        return
+
+                    try:
+
+                        new_id = int(args[1])
+
+                        if new_id not in db["admins"]:
+
+                            db["admins"].append(
+                                new_id
+                            )
+
+                            save_data(db)
+
+                        master.reply_to(
+                            m,
+                            "✅ Added"
+                        )
+
+                    except:
+
+                        master.reply_to(
+                            m,
+                            "❌ ID lỗi"
+                        )
+
+                # remove admin
+
+                elif cmd == "/xoaadm":
+
+                    if len(args) < 2:
+                        return
+
+                    try:
+
+                        rm_id = int(args[1])
+
+                        if rm_id in db["admins"]:
+
+                            db["admins"].remove(
+                                rm_id
+                            )
+
+                            save_data(db)
+
+                            master.reply_to(
+                                m,
+                                "🗑 Removed"
+                            )
+
+                    except:
+                        pass
+
+                # set delay
+
+                elif cmd == "/setdelay":
+
+                    if len(args) < 2:
+                        return
+
+                    try:
+
+                        val = float(args[1])
+
+                        if val < 0:
+                            val = 0
+
+                        DELAY_TIME = val
+
+                        master.reply_to(
+                            m,
+                            f"⏳ {DELAY_TIME}s"
+                        )
+
+                    except:
+
+                        master.reply_to(
+                            m,
+                            "❌ Delay lỗi"
+                        )
+
+        except Exception as ex:
+
+            print("ERROR:", ex)
+
+    master.infinity_polling(
+        timeout=30,
+        long_polling_timeout=30
+    )
+
+# ================= TOKEN FILTER =================
 
 def filter_system():
+
     for t in RAW_TOKENS:
+
         try:
-            bot = telebot.TeleBot(t, threaded=False); bot.get_me(); VALID_BOTS.append(bot)
-        except: pass
+
+            bot = telebot.TeleBot(
+                t,
+                threaded=False
+            )
+
+            bot.get_me()
+
+            VALID_BOTS.append(bot)
+
+            print(
+                f"Loaded: {bot.get_me().username}"
+            )
+
+        except:
+
+            print(
+                f"Dead token: {t[:15]}"
+            )
+
+# ================= MAIN =================
 
 if __name__ == "__main__":
-    threading.Thread(target=lambda: app.run(host='0.0.0.0', port=8080), daemon=True).start()
-    filter_system(); start_master()
 
+    threading.Thread(
+        target=lambda: app.run(
+            host="0.0.0.0",
+            port=8080
+        ),
+        daemon=True
+    ).start()
+
+    filter_system()
+
+    start_master()
